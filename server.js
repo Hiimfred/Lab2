@@ -1,5 +1,8 @@
 import express from 'express'
 import api from './routes/routes.js'
+import connection from './connection.js'
+
+connection();
 
 const port = process.env.PORT || 3000
 const app = express();
@@ -10,4 +13,4 @@ app.use("/api", api)
 
 app.listen(port, () => {
     console.log(`Listening to localhost:${ port }`)
-})
+});
