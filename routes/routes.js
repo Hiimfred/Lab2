@@ -5,8 +5,51 @@ import projectAssignment from "../model/projectAssignment.js"
 
 const router = express.Router()
 
-router.get('/', (req, res) => {
-    res.send('hello world')
+router.get('/', async (req, res) => {
+    try {
+        const details = await employee.aggregate([
+            {
+                $lookup: {
+                    from: 'project assignments',
+                    localField: 'employee_id',
+                    foreignField: 'employee_id',
+                    as: 'a_details'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$a_details',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from: 'projects',
+                    localField: 'a_details.project_code',
+                    foreignField: 'project_code',
+                    as: 'p_details'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$p_details',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    employee_id: 1,
+                    full_name: 1,
+                    project_name: '$p_details.project_name',
+                    start_date: '$a_details.start_date'
+                }
+            }
+        ]);
+        res.status(200).json(details)
+        // console.log(details)
+    } catch (error) {
+        res.status(500).json({ message: 'Could not find users.', error})
+    }
 })
 
 router.post("/employee", async (req, res) => {
