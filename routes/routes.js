@@ -5,27 +5,27 @@ import projectAssignment from "../model/projectAssignment.js"
 
 const router = express.Router()
 
-router.get('/', async (req, res) => {
+router.get('/assignments', async (req, res) => {
     try {
-        const details = await employee.aggregate([
+        const details = await projectAssignment.aggregate([
             {
                 $lookup: {
-                    from: 'project assignments',
+                    from: 'employees',
                     localField: 'employee_id',
                     foreignField: 'employee_id',
-                    as: 'a_details'
+                    as: 'e_details'
                 }
             },
             {
                 $unwind: {
-                    path: '$a_details',
+                    path: '$e_details',
                     preserveNullAndEmptyArrays: true
                 }
             },
             {
                 $lookup: {
                     from: 'projects',
-                    localField: 'a_details.project_code',
+                    localField: 'project_code',
                     foreignField: 'project_code',
                     as: 'p_details'
                 }
@@ -39,14 +39,14 @@ router.get('/', async (req, res) => {
             {
                 $project: {
                     employee_id: 1,
-                    full_name: 1,
+                    full_name: '$e_details.full_name',
                     project_name: '$p_details.project_name',
-                    start_date: '$a_details.start_date'
+                    start_date: 1
                 }
             }
         ]);
+        
         res.status(200).json(details)
-        // console.log(details)
     } catch (error) {
         res.status(500).json({ message: 'Could not find users.', error})
     }
@@ -112,7 +112,7 @@ router.post("/project_assignments", async (req, res) => {
         await newAssignment.save();
         res.status(201).json(newAssignment)
     }   catch (error) {
-        res.status(500).json(' Could not create project assigntment, Please try again.')
+        res.status(500).json(' Could not create project assigntment, Please try again.' + error)
     }
 })
 
