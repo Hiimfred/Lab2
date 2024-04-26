@@ -44,7 +44,9 @@ router.get('/assignments', async (req, res) => {
                     start_date: 1
                 }
             }
-        ]);
+        ])
+        .sort({ start_date: -1 })
+        .limit(5)
         
         res.status(200).json(details)
     } catch (error) {

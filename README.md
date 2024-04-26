@@ -1,3 +1,3 @@
 Lab 2 - Fullstack
 
-In progres..
+Working dynamically loaded table with MERN-stack

@@ -21,7 +21,7 @@ const AssignmentsT = () => {
         fetchAssignments();
 
         const intervalID = setInterval(() => {
-            fetchAssignments()}, 600000)
+            fetchAssignments()}, 60000)
         return () =>  clearInterval(intervalID)
 }, [])
 
